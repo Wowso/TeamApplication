@@ -6,13 +6,41 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/Text_Start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="50dp"
+            android:text="시작" />
+
+        <Button
+            android:id="@+id/Btn_Start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#708090"
+            android:text="시작하기" />
+
+        <TextView
+            android:id="@+id/Text_End"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="50dp"
+            android:text="스탑" />
+
+        <Button
+            android:id="@+id/Btn_End"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#708090"
+            android:text="그만하기" />
+
+
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
