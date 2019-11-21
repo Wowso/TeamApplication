@@ -1,5 +1,10 @@
 package com.example.test1application;
 
+import com.microsoft.appcenter.AppCenter;
+import com.microsoft.appcenter.analytics.Analytics;
+import com.microsoft.appcenter.crashes.Crashes;
+import com.microsoft.appcenter.data.Data;
+import com.microsoft.appcenter.utils.async.AppCenterConsumer;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -50,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        AppCenter.start(getApplication(), "cd94528f-44ac-4692-9653-437320fcb2e8",
+                Analytics.class, Crashes.class, Data.class);  //microsoft AppCenter 동기화(분석, Crashes, DataBase사용)
+
 
         mContext = this;
         //buttonSet = (ImageButton) findViewById(R.id.SetButton);
