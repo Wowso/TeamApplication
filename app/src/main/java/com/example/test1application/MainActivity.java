@@ -4,6 +4,9 @@ import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
 import com.microsoft.appcenter.data.Data;
+import com.microsoft.appcenter.data.DefaultPartitions;
+import com.microsoft.appcenter.auth.Auth;
+import com.microsoft.appcenter.data.models.WriteOptions;
 import com.microsoft.appcenter.utils.async.AppCenterConsumer;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -49,15 +52,29 @@ public class MainActivity extends AppCompatActivity {
     public static Context mContext;
 
     int pariedDeviceCount;
+    public class User {
+        public String name;
+        public String email;
+        public String phoneNumber;
+        public String id = UUID.randomUUID().toString(); //generates random id
+        public User(String s, String s2, String s3)
+        {
+            name = s;
+            email= s2;
+            phoneNumber =s3;
+        }
 
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         AppCenter.start(getApplication(), "cd94528f-44ac-4692-9653-437320fcb2e8",
-                Analytics.class, Crashes.class, Data.class);  //microsoft AppCenter 동기화(분석, Crashes, DataBase사용)
+                Analytics.class, Crashes.class, Data.class,Auth.class);  //microsoft AppCenter 동기화(분석, Crashes, DataBase사용)
 
+        User user = new User("Jinsu","anjinsu96@naver.com","010-5159-2620");
+        Data.create(user.id, user, User.class, DefaultPartitions.USER_DOCUMENTS);
 
         mContext = this;
         //buttonSet = (ImageButton) findViewById(R.id.SetButton);
@@ -107,12 +124,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public class User{
-        private String name;
-        private String email;
-        private String phoneNumber;
-        private String id = UUID.randomUUID().toString();
-    }
+
 
     @Override
 
