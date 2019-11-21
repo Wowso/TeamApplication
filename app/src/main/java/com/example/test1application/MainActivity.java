@@ -107,6 +107,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public class User{
+        private String name;
+        private String email;
+        private String phoneNumber;
+        private String id = UUID.randomUUID().toString();
+    }
 
     @Override
 
