@@ -40,20 +40,6 @@ import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^[a-zA-Z0-9!@.#$%^&*?_~]{4,16}$");
-
-    // 파이어베이스 인증 객체 생성
-    private FirebaseAuth firebaseAuth;
-
-    // 이메일과 비밀번호
-    private EditText editTextEmail;
-    private EditText editTextPassword;
-
-    private String email = "";
-    private String password = "";
-
-
-    //////////////////////////////////////////////
     private static final int REQUEST_ENABLE_BT = 10;
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothDevice bluetoothDevice;
@@ -68,19 +54,12 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton buttonSet;
     private Button btn_Start, btn_End, btn_Bt;
     public static Context mContext;
-
     int pariedDeviceCount;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        firebaseAuth = FirebaseAuth.getInstance();
-
-        editTextEmail = findViewById(R.id.et_email);
-        editTextPassword = findViewById(R.id.et_password);
 
         mContext = this;
         //buttonSet = (ImageButton) findViewById(R.id.SetButton);
@@ -94,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         //        //sendData(editTextSend.getText().toString());
         //    }
         //});
+
         btn_Start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 //startActivity(intent);
             }
         });
+
         btn_End.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
         // 블루투스 활성화하기
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter(); // 블루투스 어댑터를 디폴트 어댑터로 설정
         if (bluetoothAdapter == null) { // 디바이스가 블루투스를 지원하지 않을 때
@@ -136,89 +118,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void signUp(View view) {
-        email = editTextEmail.getText().toString();
-        password = editTextPassword.getText().toString();
-
-        if(isValidEmail() && isValidPasswd()) {
-            createUser(email, password);
-        }
-    }
-
-    public void signIn(View view) {
-        email = editTextEmail.getText().toString();
-        password = editTextPassword.getText().toString();
-
-        if(isValidEmail() && isValidPasswd()) {
-            loginUser(email, password);
-        }
-    }
-
-    // 이메일 유효성 검사
-    private boolean isValidEmail() {
-        if (email.isEmpty()) {
-            // 이메일 공백
-            return false;
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            // 이메일 형식 불일치
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    // 비밀번호 유효성 검사
-    private boolean isValidPasswd() {
-        if (password.isEmpty()) {
-            // 비밀번호 공백
-            return false;
-        } else if (!PASSWORD_PATTERN.matcher(password).matches()) {
-            // 비밀번호 형식 불일치
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    // 회원가입
-    private void createUser(String email, String password) {
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // 회원가입 성공
-                            Toast.makeText(MainActivity.this, "회원가입 성공", Toast.LENGTH_SHORT).show();
-                        } else {
-                            // 회원가입 실패
-                            Toast.makeText(MainActivity.this, "회원가입 실패", Toast.LENGTH_SHORT).show();
-
-                        }
-                    }
-                });
-    }
-
-    // 로그인
-    private void loginUser(String email, String password)
-    {
-        firebaseAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // 로그인 성공
-                            Toast.makeText(MainActivity.this, "로그인 성공", Toast.LENGTH_SHORT).show();
-                        } else {
-                            // 로그인 실패
-                            Toast.makeText(MainActivity.this, "로그인 실패", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
-
-
     @Override
-
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
