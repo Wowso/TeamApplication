@@ -23,6 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#708090"
+            android:onClick="mOnClick"
             android:text="시작하기" />
 
         <TextView
@@ -37,12 +38,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#708090"
+            android:onClick="mOnClick"
             android:text="그만하기" />
 
         <Button
             android:id="@+id/Btn_Bt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="mOnClick"
             android:text="블루투스 연결" />
 
         <LinearLayout
@@ -56,9 +59,10 @@
                 android:orientation="vertical">
 
                 <Button
-                    android:id="@+id/Btn_login"
+                    android:id="@+id/Btn_Login"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:onClick="mOnClick"
                     android:text="로그인창 이동" />
             </LinearLayout>
         </LinearLayout>

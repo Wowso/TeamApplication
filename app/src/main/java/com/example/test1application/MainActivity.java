@@ -28,6 +28,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
     private int readBufferPosition;
     private TextView textViewReceive;
     private ImageButton buttonSet;
-    private Button btn_Start, btn_End, btn_Bt;
     public static Context mContext;
     int pariedDeviceCount;
 
@@ -60,46 +62,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         mContext = this;
-        //buttonSet = (ImageButton) findViewById(R.id.SetButton);
-        btn_Start = (Button) findViewById(R.id.Btn_Start);
-        btn_End = (Button) findViewById(R.id.Btn_End);
-        btn_Bt = (Button) findViewById(R.id.Btn_Bt);
 
-        //buttonSet.setOnClickListener(new View.OnClickListener() {
-        //    @Override
-        //    public void onClick(View v) {
-        //        //sendData(editTextSend.getText().toString());
-        //    }
-        //});
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("message");
 
-        btn_Start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendData("Start");
-
-                //Intent intent = new Intent(MainActivity.this, PlayActivity.class);
-                //intent.putExtra("BluetoothOutput", outputStream.toString());
-                //intent.putExtra("BluetoothInput", inputStream.toString());
-                //startActivity(intent);
-            }
-        });
-
-        btn_End.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendData("End");
-            }
-        });
-        btn_Bt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (bluetoothAdapter.isEnabled()) { // 블루투스가 활성화 상태 (기기에 블루투스가 켜져있음)
-                    selectBluetoothDevice(); // 블루투스 디바이스 선택 함수 호출
-                }
-            }
-        });
+        myRef.setValue("Hello, World!");
 
         // 블루투스 활성화하기
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter(); // 블루투스 어댑터를 디폴트 어댑터로 설정
@@ -108,13 +76,36 @@ public class MainActivity extends AppCompatActivity {
         } else { // 디바이스가 블루투스를 지원 할 때
 
             if (bluetoothAdapter.isEnabled()) { // 블루투스가 활성화 상태 (기기에 블루투스가 켜져있음)
-                Toast.makeText(this, "블루투스 연결 가능", Toast.LENGTH_SHORT);
+                //Toast.makeText(this, "블루투스 연결 가능", Toast.LENGTH_SHORT);
             } else { // 블루투스가 비 활성화 상태 (기기에 블루투스가 꺼져있음)
                 // 블루투스를 활성화 하기 위한 다이얼로그 출력
                 Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 // 선택한 값이 onActivityResult 함수에서 콜백된다.
                 startActivityForResult(intent, REQUEST_ENABLE_BT);
             }
+        }
+    }
+    public void mOnClick(View view){
+        switch(view.getId()){
+            case R.id.Btn_Start:
+                sendData("Start");
+                //Intent intent = new Intent(MainActivity.this, PlayActivity.class);
+                //intent.putExtra("BluetoothOutput", outputStream.toString());
+                //intent.putExtra("BluetoothInput", inputStream.toString());
+                //startActivity(intent);
+                break;
+            case R.id.Btn_End:
+                sendData("End");
+                break;
+            case R.id.Btn_Bt:
+                if (bluetoothAdapter.isEnabled()) { // 블루투스가 활성화 상태 (기기에 블루투스가 켜져있음)
+                    selectBluetoothDevice(); // 블루투스 디바이스 선택 함수 호출
+                }
+                break;
+            case R.id.Btn_Login:
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                break;
         }
     }
 
@@ -227,6 +218,8 @@ public class MainActivity extends AppCompatActivity {
 
                                 // 개행문자를 기준으로 받음(한줄)
                                 if (tempByte == '\n') {
+
+
                                     // readBuffer 배열을 encodedBytes로 복사
                                     byte[] encodedBytes = new byte[readBufferPosition];
                                     System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -36,14 +38,48 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         editTextEmail = findViewById(R.id.edit_email);
         editTextPassword = findViewById(R.id.edit_password);
+
+
+
     }
+    ActionCodeSettings actionCodeSettings =
+            ActionCodeSettings.newBuilder()
+            .setUrl("https://health-care-e3100.firebaseapp.com/__/auth/action")
+            .setHandleCodeInApp(true)
+            .setIOSBundleId("com.example.ios")
+            .setAndroidPackageName(
+                    "com.example.android",
+                    true, "12").build();
 
     public void mOnClick(View view){
         switch(view.getId()){
-            case R.id.btn_google:
-                Toast.makeText(this,"접속합니다",Toast.LENGTH_SHORT).show();
+            case R.id.Btn_google:
+                Toast.makeText(this,"구글 로그인",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.Btn_Signup:
+                signUp(view);
+                break;
+            case R.id.Btn_SignIn:
+                signIn(view);
+                break;
+            case R.id.Btn_emailN:
+                email = editTextEmail.getText().toString();
+                Toast.makeText(this,"구글 로그인",Toast.LENGTH_SHORT).show();
+                FirebaseAuth auth = FirebaseAuth.getInstance();
 
-
+                auth.sendSignInLinkToEmail(email, actionCodeSettings)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isComplete()){
+                                    Log.d("data", "Email sent.");
+                                }
+                            }
+                        });
+                break;
+            case R.id.Btn_facebook:
+                Toast.makeText(this,"페이스북 로그인",Toast.LENGTH_SHORT).show();
+                break;
         }
     }
 
