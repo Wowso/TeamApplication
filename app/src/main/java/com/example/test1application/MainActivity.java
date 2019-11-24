@@ -156,7 +156,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btn_chart:
                 intent = new Intent(MainActivity.this, ListViewMultiChartActivity.class);
-                //intent.putExtra("userid",)
+                intent.putExtra("userid","6F6CA4C5");
+                intent.putExtra("userid","6F6CA4C5");
+                intent.putExtra("userid","6F6CA4C5");
                 startActivity(intent);
                 break;
 
