@@ -1,2 +1,2 @@
-include ':app', ':library', ':library2', ':library3', ':Drawerlibrary'
+include ':app', ':library', ':library2', ':library3', ':Drawerlibrary', ':MPChartExample', ':MPChartLib'
 rootProject.name='Test1Application'

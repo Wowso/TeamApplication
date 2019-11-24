@@ -64,6 +64,13 @@
                     android:layout_height="wrap_content"
                     android:onClick="mOnClick"
                     android:text="로그인창 이동" />
+
+                <Button
+                    android:id="@+id/btn_chart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="mOnClick"
+                    android:text="차트이동" />
             </LinearLayout>
         </LinearLayout>
 

@@ -28,18 +28,41 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
+
+
+
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+
+import com.github.mikephil.charting.utils.Utils;
+import com.example.test1application.ListViewMultiChartActivity;
+import com.example.test1application.R;
+import com.example.test1application.fragments.SimpleChartDemo;
+import static com.google.android.gms.common.internal.safeparcel.SafeParcelable.NULL;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,19 +78,23 @@ public class MainActivity extends AppCompatActivity {
     private int readBufferPosition;
     private TextView textViewReceive;
     private ImageButton buttonSet;
+    private DatabaseReference mDatabase;
+
     public static Context mContext;
     int pariedDeviceCount;
+    int count=0;
+    int idvalue;
+    boolean muscheck = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
 
-        myRef.setValue("Hello, World!");
+
 
         // 블루투스 활성화하기
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter(); // 블루투스 어댑터를 디폴트 어댑터로 설정
@@ -85,17 +112,38 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+
     public void mOnClick(View view){
+        Intent intent;
         switch(view.getId()){
             case R.id.Btn_Start:
-                sendData("Start");
-                //Intent intent = new Intent(MainActivity.this, PlayActivity.class);
-                //intent.putExtra("BluetoothOutput", outputStream.toString());
-                //intent.putExtra("BluetoothInput", inputStream.toString());
-                //startActivity(intent);
+                count=1;
+                Query lastQuery = mDatabase.child("users").child("6F6CA4C5").child("exercise").child("pushup");
+                lastQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Log.i("data001", dataSnapshot.child("lastkey").getValue().toString());
+                        idvalue = Integer.parseInt(dataSnapshot.child("lastkey").getValue().toString());
+                        idvalue++;
+                        mDatabase.child("users").child("6F6CA4C5").child("exercise").child("pushup").child("lastkey").setValue(idvalue);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                sendData("s");
+//                intent = new Intent(MainActivity.this, BarChartActivity.class);
+//                intent.putExtra("BluetoothOutput", outputStream.toString());
+//                intent.putExtra("BluetoothInput", inputStream.toString());
+//                startActivity(intent);
                 break;
             case R.id.Btn_End:
-                sendData("End");
+                intent = new Intent(MainActivity.this, EndActivity.class);
+                sendData("e");
+                //startActivity(intent);
                 break;
             case R.id.Btn_Bt:
                 if (bluetoothAdapter.isEnabled()) { // 블루투스가 활성화 상태 (기기에 블루투스가 켜져있음)
@@ -103,9 +151,15 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.Btn_Login:
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.btn_chart:
+                intent = new Intent(MainActivity.this, ListViewMultiChartActivity.class);
+                //intent.putExtra("userid",)
+                startActivity(intent);
+                break;
+
         }
     }
 
@@ -192,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void receiveData() {
 
+
         final Handler handler = new Handler();
         // 데이터를 수신하기 위한 버퍼를 생성
         readBufferPosition = 0;
@@ -211,21 +266,27 @@ public class MainActivity extends AppCompatActivity {
                             byte[] bytes = new byte[byteAvailable];
                             inputStream.read(bytes);
 
-
                             // 입력 스트림 바이트를 한 바이트씩 읽어 옵니다.
                             for (int i = 0; i < byteAvailable; i++) {
                                 byte tempByte = bytes[i];
+                                //System.arraycopy(readBuffer, 0, bytes, 0, bytes.length);
 
                                 // 개행문자를 기준으로 받음(한줄)
                                 if (tempByte == '\n') {
 
-
                                     // readBuffer 배열을 encodedBytes로 복사
                                     byte[] encodedBytes = new byte[readBufferPosition];
                                     System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
+
                                     // 인코딩 된 바이트 배열을 문자열로 변환
-                                    final String text = new String(encodedBytes, "US-ASCII");
+                                    final String text = new String(encodedBytes, "UTF-8");
+
                                     //Log.i("data",text);
+                                    String[] change_text = text.split(",");
+
+                                    writeSenser("6F6CA4C5","pushup",idvalue,change_text[0],change_text[1],change_text[2]);
+
+
                                     readBufferPosition = 0;
                                     handler.post(new Runnable() {
                                         @Override
@@ -256,12 +317,38 @@ public class MainActivity extends AppCompatActivity {
         workerThread.start();
     }
 
+    public float byteArrayToFloat(byte bytes[]){
+        return byteArrayToFloat(bytes);
+    }
+
+    private void writeNewUser(String userId, String name, String email) {
+        User user = new User(name, email);
+
+        mDatabase.child("users").child(userId).setValue(user);
+    }
+
+    private void writeSenser(String userId, String mus, int id, String acc, String fsr, String vec)
+    {
+        User user = new User(acc, fsr, vec);
+        //mDatabase.child("users").child(userId).child("exercise").child(mus).child("lastkey").setValue(idvalue);
+        mDatabase.child("users").child(userId).child("exercise").child(mus).child(String.valueOf(id)).child(String.valueOf(count)).setValue(user);
+        count++;
+    }
+    private int id_check(String userId, String mus)
+    {
+
+
+        return 1;
+    }
+
     void sendData(String text) {
         // 문자열에 개행문자("\n")를 추가해줍니다.
         text += "\n";
         try {
             // 데이터 송신
             Log.i("data", text);
+            outputStream.write(text.getBytes());
+            outputStream.write(text.getBytes());
             outputStream.write(text.getBytes());
         } catch (Exception e) {
             e.printStackTrace();
