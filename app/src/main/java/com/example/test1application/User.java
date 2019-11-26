@@ -7,7 +7,8 @@ public class User{
     public  String fsr;
     public  String vec;
     public String mus;
-    public int id;
+    public int  id;
+    public String  tag;
 
     public User(){
 
@@ -26,21 +27,17 @@ public class User{
         this.vec = vec;
     }
 
-    public  User(int id)
+    public  User(String tag)
     {
-        this.id = id;
+        this.tag = tag;
     }
 
     public  User(int id,String acc, String fsr, String vec)
     {
+        this.id = id;
         this.acc = acc;
         this.fsr = fsr;
         this.vec = vec;
-    }
-
-    public User(String mus)
-    {
-        this.mus = mus;
     }
 
 }

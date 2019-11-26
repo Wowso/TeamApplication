@@ -127,13 +127,13 @@ public class MainActivity extends AppCompatActivity {
                         idvalue = Integer.parseInt(dataSnapshot.child("lastkey").getValue().toString());
                         idvalue++;
                         mDatabase.child("users").child("6F6CA4C5").child("exercise").child("pushup").child("lastkey").setValue(idvalue);
+                        mDatabase.child("users").child("6F6CA4C5").child("exercise").child("pushup").child(String.valueOf(idvalue)).child("tag").setValue(idvalue); //데이터베이스.유저.유저아이디.운동카테고리.운동이름.운동번호.운동번호값 저장
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
                     }
                 });
-
                 sendData("s");
 //                intent = new Intent(MainActivity.this, BarChartActivity.class);
 //                intent.putExtra("BluetoothOutput", outputStream.toString());
@@ -155,10 +155,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 break;
             case R.id.btn_chart:
-                intent = new Intent(MainActivity.this, ListViewMultiChartActivity.class);
+                intent = new Intent(MainActivity.this, LineChartActivity1.class);
                 intent.putExtra("userid","6F6CA4C5");
-                intent.putExtra("userid","6F6CA4C5");
-                intent.putExtra("userid","6F6CA4C5");
+                intent.putExtra("mus","pushup");
+                intent.putExtra("idtag",idvalue);
                 startActivity(intent);
                 break;
 
@@ -331,9 +331,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void writeSenser(String userId, String mus, int id, String acc, String fsr, String vec)
     {
-        User user = new User(acc, fsr, vec);
+        User user = new User(count,acc, fsr, vec); //센서값
         //mDatabase.child("users").child(userId).child("exercise").child(mus).child("lastkey").setValue(idvalue);
-        mDatabase.child("users").child(userId).child("exercise").child(mus).child(String.valueOf(id)).child(String.valueOf(count)).setValue(user);
+
+        mDatabase.child("users").child(userId).child("exercise").child(mus).child(String.valueOf(id)).child(String.valueOf(count)).setValue(user);  //데이터베이스.유저.유저아이디.운동카테고리.운동이름.운동번호.센서값번호.센서값 및 아이디 번호
+
         count++;
     }
     private int id_check(String userId, String mus)

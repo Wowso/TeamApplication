@@ -18,10 +18,10 @@
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:layout_toLeftOf="@+id/tvXMax"/>
+        android:layout_toLeftOf="@+id/muscounttext"/>
 
     <TextView
-        android:id="@+id/tvXMax"
+        android:id="@+id/muscounttext"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
